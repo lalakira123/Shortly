@@ -22,7 +22,7 @@ export function signIn(req, res) {
     const data = { userId: user.id }
 
     const secretKey = process.env.JWT_SECRET;
-    const config = { expiresIn: 60*60*24*7 }
+    const config = { expiresIn: 60*60*12 }
     const token = jwt.sign(data, secretKey, config);
 
     res.status(200).send(token);
