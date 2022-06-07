@@ -27,3 +27,21 @@ export function getUrlId(req, res) {
 
     res.status(200).send(existUrl);
 }
+
+export async function redirectToUrl(req, res) {
+    const { existShortUrl } = res.locals;
+    const add = existShortUrl.visitCount + 1;
+    const shortUrl = existShortUrl.shortUrl;
+    const url = existShortUrl.url;
+    try {
+        await connection.query(`
+            UPDATE links SET "visitCount"=$1
+            WHERE "shortUrl"=$2;
+        `, [add, shortUrl]);
+
+        res.redirect(url);
+    } catch (error) {
+        res.send('Não foi possível conectar ao Banco');
+        console.log(error);
+    }
+} 

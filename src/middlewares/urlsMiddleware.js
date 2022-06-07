@@ -46,3 +46,23 @@ export async function urlsIdValidation(req, res, next) {
         console.log(error);
     }
 }
+
+export async function shortUrlValidation(req, res, next) {
+    const shortUrl = req.params.shortUrl;
+    console.log(shortUrl);
+    try {
+        const existShortUrl = await connection.query(`
+            SELECT * 
+            FROM links
+            WHERE "shortUrl" = $1; 
+        `, [shortUrl]);
+        if( existShortUrl.rowCount === 0 ) return res.sendStatus(404);
+
+        res.locals.existShortUrl = existShortUrl.rows[0];
+
+        next();
+    } catch (error) {
+        res.send('Não foi possível conectar ao Banco');
+        console.log(error);
+    }
+}
