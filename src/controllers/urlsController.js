@@ -38,7 +38,7 @@ export async function redirectToUrl(req, res) {
             WHERE "shortUrl"=$2;
         `, [add, shortUrl]);
 
-        return res.redirect(url);
+        res.redirect(url);
     } catch (error) {
         res.send('Não foi possível conectar ao Banco');
         console.log(error);
