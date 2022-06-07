@@ -21,3 +21,9 @@ export async function insertShortenUrl(req, res) {
         console.log(error);
     }
 }
+
+export function getUrlId(req, res) {
+    const { existUrl } = res.locals;
+
+    res.status(200).send(existUrl);
+}

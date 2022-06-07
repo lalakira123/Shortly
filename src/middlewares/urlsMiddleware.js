@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 
+import connection from './../config/db.js';
 import urlSchema from "./../schemas/urlsSchema.js";
 
 export async function urlValidationSchema(req, res, next) {
@@ -25,4 +26,23 @@ export function validateToken(req, res, next) {
             next();
         }
     });
+}
+
+export async function urlsIdValidation(req, res, next) {
+    const { id } = req.params;
+    try {
+        const existUrl = await connection.query(`
+            SELECT links.id, links."shortUrl", links.url
+            FROM links
+            WHERE links.id = $1;
+        `, [id]);
+        if( existUrl.rowCount === 0 ) return res.sendStatus(404);
+
+        res.locals.existUrl = existUrl.rows[0];
+
+        next();
+    } catch (error) {
+        res.send('Não foi possível conectar ao Banco');
+        console.log(error);
+    }
 }
