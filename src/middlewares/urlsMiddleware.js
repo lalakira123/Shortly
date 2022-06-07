@@ -48,8 +48,7 @@ export async function urlsIdValidation(req, res, next) {
 }
 
 export async function shortUrlValidation(req, res, next) {
-    const shortUrl = req.params.shortUrl;
-    console.log(shortUrl);
+    const { shortUrl } = req.params;
     try {
         const existShortUrl = await connection.query(`
             SELECT * 

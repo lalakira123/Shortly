@@ -1,4 +1,4 @@
-import { customAlphabet } from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import connection from './../config/db.js';
 
@@ -6,8 +6,7 @@ export async function insertShortenUrl(req, res) {
     const { url } = req.body;
     const { userId } = res.locals;
 
-    const nanoid = customAlphabet(url, 8);
-    const shortUrl = nanoid();
+    const shortUrl = nanoid(6);
 
     try {
         await connection.query(`
@@ -39,7 +38,7 @@ export async function redirectToUrl(req, res) {
             WHERE "shortUrl"=$2;
         `, [add, shortUrl]);
 
-        res.redirect(url);
+        return res.redirect(url);
     } catch (error) {
         res.send('Não foi possível conectar ao Banco');
         console.log(error);
