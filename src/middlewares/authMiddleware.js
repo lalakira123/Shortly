@@ -1,3 +1,5 @@
+import bcrypt from 'bcrypt';
+
 import connection from './../config/db.js';
 import { signUpSchema, signInSchema } from './../schemas/authSchemas.js';
 
@@ -35,10 +37,13 @@ export async function signInValidationSchema(req, res, next) {
 }
 
 export async function signInValidation(req, res, next) {
-    const { email } = req.body;
+    const { email, password } = req.body;
     try {
         const query = await connection.query(`SELECT * FROM users WHERE email = $1`, [email]);
         if( query.rowCount === 0 ) return res.sendStatus(401);
+
+        const validacao = bcrypt.compareSync(password, query.rows[0].password);
+        if(!validacao) return res.status(401).send('Senha Inválida');
 
         res.locals.user = query.rows[0];
 
