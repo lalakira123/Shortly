@@ -26,11 +26,11 @@ export async function getRanking(req, res) {
                 users."id", 
                 users."name", 
                 COUNT(links."userId") as "linksCount", 
-                SUM(links."visitCount") as "visitCount"
+                COALESCE(SUM(links."visitCount"),0) as "visitCount"
             FROM users
-            JOIN links ON users."id"=links."userId"
+            LEFT JOIN links ON users."id"=links."userId"
             GROUP BY users."id"
-            ORDER BY "visitCount" DESC
+            ORDER BY "visitCount" DESC, "linksCount" DESC
             LIMIT 10;
         `);
         const ranking = query.rows;
