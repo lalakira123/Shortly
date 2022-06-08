@@ -1,11 +1,11 @@
 import { Router } from 'express';
 
 import { userValidation } from './../middlewares/usersMiddleware.js';
-import { getUserId } from './../controllers/usersController.js';
+import { getRanking, getUserId } from './../controllers/usersController.js';
 
 const usersRouter = Router();
 
+usersRouter.get('/users/ranking', getRanking);
 usersRouter.get('/users/:id', userValidation, getUserId);
-usersRouter.get('/users/ranking');
 
 export default usersRouter;
