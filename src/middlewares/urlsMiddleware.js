@@ -1,5 +1,3 @@
-import jwt from 'jsonwebtoken';
-
 import connection from './../config/db.js';
 import urlSchema from "./../schemas/urlsSchema.js";
 
@@ -11,21 +9,6 @@ export async function urlValidationSchema(req, res, next) {
     }
 
     next();
-}
-
-export function validateToken(req, res, next) {
-    const { authorization } = req.headers;
-    const token = authorization?.replace('Bearer ', '').trim();
-    
-    const secretKey = process.env.JWT_SECRET;
-
-    jwt.verify(token, secretKey, (err, result) => { 
-        if(err) return res.status(401).send({ err: err });
-        if(result) {
-            res.locals.userId = result.userId;
-            next();
-        }
-    });
 }
 
 export async function urlsIdValidation(req, res, next) {
@@ -65,3 +48,21 @@ export async function shortUrlValidation(req, res, next) {
         console.log(error);
     }
 }
+
+export async function userContainShortUrl(req, res, next) {
+    const { id } = req.params;
+    const { userId } = res.locals;
+    try {
+        const query = await connection.query(`
+            SELECT * FROM links WHERE id=$1;
+        `, [id]);
+        if( query.rowCount === 0 ) return res.sendStatus(404);
+        if( query.rows[0].userId !== userId ) return res.sendStatus(401);
+
+        next();
+    } catch (error) {
+        res.send('Não foi possível conectar ao Banco');
+        console.log(error);
+    }
+}
+

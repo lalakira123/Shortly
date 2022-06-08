@@ -44,3 +44,17 @@ export async function redirectToUrl(req, res) {
         console.log(error);
     }
 } 
+
+export async function deleteUrl(req, res) {
+    const { id } = req.params;
+    try {
+        await connection.query(`
+            DELETE FROM links WHERE id=$1;
+        `, [id]);
+
+        res.sendStatus(204);
+    } catch (error) {
+        res.send('Não foi possível conectar ao Banco');
+        console.log(error);
+    }
+}
